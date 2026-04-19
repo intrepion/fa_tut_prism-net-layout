@@ -14,7 +14,19 @@ PrismDimensions buildPrismDimensions({
 }
 
 FaceSize faceDisplaySize(String faceName, PrismDimensions dimensions) {
-  throw UnimplementedError();
+  switch (faceName) {
+    case 'front':
+    case 'back':
+      return FaceSize(width: dimensions.width, height: dimensions.height);
+    case 'left':
+    case 'right':
+      return FaceSize(width: dimensions.depth, height: dimensions.height);
+    case 'top':
+    case 'bottom':
+      return FaceSize(width: dimensions.width, height: dimensions.depth);
+  }
+
+  throw ArgumentError.value(faceName, 'faceName', 'Unknown face');
 }
 
 List<PrismNetLayoutItem> buildPrismNetLayout(
