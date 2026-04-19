@@ -33,5 +33,32 @@ List<PrismNetLayoutItem> buildPrismNetLayout(
   List<FaceCropPlan> cropPlan,
   PrismDimensions dimensions,
 ) {
-  throw UnimplementedError();
+  final cropPlanByFace = {for (final item in cropPlan) item.faceName: item};
+
+  final positions = <String, (int, int)>{
+    'front': (dimensions.depth, dimensions.depth),
+    'back': (
+      dimensions.depth + dimensions.width + dimensions.depth,
+      dimensions.depth,
+    ),
+    'left': (0, dimensions.depth),
+    'right': (dimensions.depth + dimensions.width, dimensions.depth),
+    'top': (dimensions.depth, 0),
+    'bottom': (dimensions.depth, dimensions.depth + dimensions.height),
+  };
+
+  return canonicalPrismFaces.map((faceName) {
+    final size = faceDisplaySize(faceName, dimensions);
+    final (x, y) = positions[faceName]!;
+    final crop = cropPlanByFace[faceName];
+
+    return PrismNetLayoutItem(
+      faceName: faceName,
+      x: x,
+      y: y,
+      displayWidth: size.width,
+      displayHeight: size.height,
+      isHidden: crop?.isMissing ?? true,
+    );
+  }).toList();
 }
